@@ -1,3 +1,7 @@
+# Rationale
+
+
+# Instructions
 It is a good idea to be confortable practicing present moment awereness before using this, as it can work as another source of distraction. The idea is to somewhat internalize the method so it can be done quasy automatically.
 
 0. Open the j-for-vipassana.html file
