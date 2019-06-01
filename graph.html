@@ -12,26 +12,26 @@
             .attr("width", window.innerWidth)
             .attr("height", window.innerHeight);
 
-        d3.csv('/data/190528.csv').then(
+        d3.csv('/data/190531.csv').then(
             (data) => {
                 window.data = data;
 
-                WIDTH = window.innerWidth
-                HEIGHT = window.innerHeight
-                T0 = parseInt(_.first(data).timestamp, 10)
-                T1 = parseInt(_.last(data).timestamp, 10)
-                X = d3.scaleLinear().domain([T0,T1]).range([0, window.innerWidth])
+                window.WIDTH = window.innerWidth
+                window.HEIGHT = window.innerHeight
+                window.T0 = _.min(_.map(data, (d) => parseInt(d.timestamp, 10)))
+                window.T1 = _.max(_.map(data, (d) => parseInt(d.timestamp, 10)))
+                window.X = d3.scaleLinear().domain([T0,T1]).range([0, window.innerWidth])
             
                 // draw timeline
                 svg.append("line").style("stroke", "grey").attr("x1", 0).attr("x2", WIDTH).attr("y1", HEIGHT/2).attr("y2", HEIGHT/2)
                    
                 //get vipassana moments
                 js = _.filter(data, (d) => { return d.key == 'j' })
-                fs = _.filter(data, (d) => { return d.key == 'k' })
+                fs = _.filter(data, (d) => { return d.key == 'f' })
 
                 window.X = X
                 //draw vipassana lines/circles
-                svg.selectAll("circle")
+                svg.selectAll("js")
                   .data(js)
                   .enter().append("circle")
                     .attr("cx", function(d) { return X(parseInt(d.timestamp, 10)); })
@@ -39,21 +39,43 @@
                     .attr("r", 2.5);
 
                 
-                fs_groups = _.reduce(data, (res, d)=> {
-                    console.log(d, d.key == 'k')
-                    if(res.length == 0) {
-                        res.push([])
+                fs_groups = _.reduce(data, (groups, d)=> {
+                    // console.log(d, d.key == 'f')
+                    if(_.isEmpty(groups)) {
+                        groups.push([])
                     }
-                    if (d.key == 'j' && res[res.length-1].length > 0) {
-                        res.push([]) 
+
+                    last_group = _.last(groups)
+
+                    if (d.key == 'j' &&  !_.isEmpty(_.last(groups))) {
+                        groups.push([]) 
                     }
                     else if(d.key == 'f') {
-                        res[res.length-1].push(d)
+                        d.group = last_group
+                        d.index = last_group.length
+                        d.sign = (groups.length % 2) * 2 - 1 // so its 1 or -1
+                        last_group.push(d)
                     }
-                    return res
+                    return groups
                 }, [])
-                
-                
+
+                // console.log('fs-groups', fs_groups)     
+
+                function kY(index, group_size, sign, d) {
+                    res = HEIGHT/2 - (group_size - index) * sign * 10 
+                    console.log('kY', res, d.comment)
+                    return res
+                }
+
+                console.log('fs length', fs.length)
+
+                svg.selectAll("fs")
+                  .data(fs)
+                  .enter().append("circle")
+                    .attr("cx", function(d) { return X(parseInt(d.timestamp, 10)); })
+                    .attr("cy", function(d) { return kY(d.index, d.group.length, d.sign, d); })
+                    .attr("r", 2.5)
+                    .style("fill", "red");
 
             }
         )
