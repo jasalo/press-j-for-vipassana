@@ -1,0 +1,21 @@
+<html>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+    
+    
+
+    <script>
+        // load the data
+        d3.csv('/data/190528.csv').then(
+            (data) => {
+                window.data = data;
+               // t0 = _.reduce(data, (mem, line) => {if}
+                d3.scale.linear().domain(0,1000).range(0,10)
+                //_.reduce(data, (t0, line) => {if _.isNaN(parseInt(line.timestamp)) return t0; return t0 < line.timestamp ? t0 : parseInt(line.timestamp) }, Infinity)
+            }
+        )
+        
+        
+        // map time to window width
+    </script>
+</html>
