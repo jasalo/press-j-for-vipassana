@@ -2,16 +2,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
     
-    
+    <body bgcolor="whitesmoke">
+            <div id="graph" style="width: 100%; height: 100%;margin-left: auto; margin-right: auto;"></div>
+    </body>
 
     <script>
-        // load the data
+        // load the da
+        var svg = d3.select("#graph").append("svg")
+            .attr("width", window.innerWidth)
+            .attr("height", window.innerHeight);
+
         d3.csv('/data/190528.csv').then(
             (data) => {
                 window.data = data;
-               // t0 = _.reduce(data, (mem, line) => {if}
-                d3.scale.linear().domain(0,1000).range(0,10)
-                //_.reduce(data, (t0, line) => {if _.isNaN(parseInt(line.timestamp)) return t0; return t0 < line.timestamp ? t0 : parseInt(line.timestamp) }, Infinity)
+
+                WIDTH = window.innerWidth
+                HEIGHT = window.innerHeight
+                T0 = parseInt(_.first(data).timestamp, 10)
+                T1 = parseInt(_.last(data).timestamp, 10)
+                X = d3.scaleLinear().domain([T0,T1]).range([0, window.innerWidth])
+            
+                // draw timeline
+                svg.append("line").style("stroke", "grey").attr("x1", 0).attr("x2", WIDTH).attr("y1", HEIGHT/2).attr("y2", HEIGHT/2)
+                   
+                //get vipassana moments
+                js = _.filter(data, (d) => { return d.key == 'j' })
+                fs = _.filter(data, (d) => { return d.key == 'k' })
+
+                window.X = X
+                //draw vipassana lines/circles
+                svg.selectAll("circle")
+                  .data(js)
+                  .enter().append("circle")
+                    .attr("cx", function(d) { return X(parseInt(d.timestamp, 10)); })
+                    .attr("cy", function(d) { return HEIGHT/2; })
+                    .attr("r", 2.5);
+
+                
+                fs_groups = _.reduce(data, (res, d)=> {
+                    console.log(d, d.key == 'k')
+                    if(res.length == 0) {
+                        res.push([])
+                    }
+                    if (d.key == 'j' && res[res.length-1].length > 0) {
+                        res.push([]) 
+                    }
+                    else if(d.key == 'f') {
+                        res[res.length-1].push(d)
+                    }
+                    return res
+                }, [])
+                
+                
+
             }
         )
         
