@@ -7,13 +7,16 @@
     function keyDownTextField(e) {
         var key = e.key
         if(key == 'j') {
-            window.text += Date.now() + ', j, clear mind\n'
+            window.text += Date.now() + ',j,clear mind\n'
             console.log(Date.now(), 'j', 'clear mind')
+        } else if (key == 'g') {
+            window.text += Date.now() + ',g,hijacked by thought\n'
+            console.log(Date.now(), 'g', 'hijacked by thought')
         } else if (key == 'f') {
-            window.text += Date.now() + ', f, hijacked by thought\n'
-            console.log(Date.now(), 'f', 'hijacked by thought')
+            window.text += Date.now() + ',f,+1 thought\n'
+            console.log(Date.now(), 'f', '+1 thought')
         } else if (key == 'a') {
-            window.text += Date.now() + ', a, session marker\n'
+            window.text += Date.now() + ',a,session marker\n'
             console.log(Date.now(), 'a', 'session marker')
         }
     }
